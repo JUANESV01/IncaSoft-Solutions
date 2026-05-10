@@ -1,0 +1,56 @@
+{% extends "gestion/base.html" %}
+{% block title %}Incapacidades | INCASOFT{% endblock %}
+{% block content %}
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Operacion diaria</p>
+        <h1>Incapacidades</h1>
+    </div>
+    {% if puede_editar %}<a class="button primary" href="{% url 'gestion:incapacidad_crear' %}">Nueva incapacidad</a>{% endif %}
+</header>
+
+<form class="filters" method="get">
+    {{ form.q }}
+    {{ form.estado }}
+    {{ form.tipo }}
+    {{ form.fecha_inicio }}
+    {{ form.fecha_fin }}
+    <button class="button" type="submit">Filtrar</button>
+    <a class="button ghost" href="{% url 'gestion:incapacidad_lista' %}">Limpiar</a>
+</form>
+
+<section class="panel">
+    <table>
+        <thead>
+            <tr>
+                <th>Colaborador</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Periodo</th>
+                <th>Dias</th>
+                <th>Entidad</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for incapacidad in incapacidades %}
+            <tr>
+                <td>
+                    <strong>{{ incapacidad.colaborador.nombre_completo }}</strong>
+                    <small>{{ incapacidad.colaborador.numero_identificacion }}</small>
+                </td>
+                <td>{{ incapacidad.tipo.nombre }}</td>
+                <td><span class="status state-{{ incapacidad.estado|lower }}">{{ incapacidad.get_estado_display }}</span></td>
+                <td>{{ incapacidad.fecha_inicio }} a {{ incapacidad.fecha_fin }}</td>
+                <td>{{ incapacidad.dias }}</td>
+                <td>{{ incapacidad.entidad_responsable }}</td>
+                <td><a class="table-action" href="{{ incapacidad.get_absolute_url }}">Ver</a></td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="7" class="empty">No se encontraron incapacidades con esos filtros.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
+

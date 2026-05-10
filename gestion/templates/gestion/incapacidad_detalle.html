@@ -1,0 +1,63 @@
+{% extends "gestion/base.html" %}
+{% block title %}Detalle incapacidad | INCASOFT{% endblock %}
+{% block content %}
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Detalle de caso</p>
+        <h1>{{ incapacidad.colaborador.nombre_completo }}</h1>
+    </div>
+    <div class="actions">
+        {% if puede_editar and not incapacidad.esta_cerrada %}
+            <a class="button primary" href="{% url 'gestion:incapacidad_estado' incapacidad.pk %}">Actualizar estado</a>
+        {% endif %}
+        <a class="button ghost" href="{% url 'gestion:incapacidad_lista' %}">Volver</a>
+    </div>
+</header>
+
+<section class="detail-grid">
+    <article class="panel">
+        <div class="panel-head">
+            <h2>Informacion de la incapacidad</h2>
+            <span class="status state-{{ incapacidad.estado|lower }}">{{ incapacidad.get_estado_display }}</span>
+        </div>
+        <dl class="data-list">
+            <div><dt>Tipo</dt><dd>{{ incapacidad.tipo.nombre }}</dd></div>
+            <div><dt>Entidad responsable</dt><dd>{{ incapacidad.entidad_responsable }}</dd></div>
+            <div><dt>Periodo</dt><dd>{{ incapacidad.fecha_inicio }} a {{ incapacidad.fecha_fin }}</dd></div>
+            <div><dt>Dias</dt><dd>{{ incapacidad.dias }}</dd></div>
+            <div><dt>Radicado</dt><dd>{{ incapacidad.numero_radicado|default:"Sin radicado" }}</dd></div>
+            <div><dt>Soporte medico</dt><dd>{% if incapacidad.soporte_medico %}<a href="{{ incapacidad.soporte_medico.url }}" target="_blank">Abrir archivo</a>{% else %}No adjunto{% endif %}</dd></div>
+        </dl>
+        {% if incapacidad.observaciones %}
+            <p class="note">{{ incapacidad.observaciones }}</p>
+        {% endif %}
+    </article>
+
+    <article class="panel">
+        <div class="panel-head"><h2>Colaborador</h2></div>
+        <dl class="data-list">
+            <div><dt>Identificacion</dt><dd>{{ incapacidad.colaborador.tipo_documento }} {{ incapacidad.colaborador.numero_identificacion }}</dd></div>
+            <div><dt>Cargo</dt><dd>{{ incapacidad.colaborador.cargo }}</dd></div>
+            <div><dt>Area</dt><dd>{{ incapacidad.colaborador.area }}</dd></div>
+            <div><dt>EPS</dt><dd>{{ incapacidad.colaborador.eps }}</dd></div>
+            <div><dt>ARL</dt><dd>{{ incapacidad.colaborador.arl|default:"No registrada" }}</dd></div>
+        </dl>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="panel-head"><h2>Historial de estados</h2></div>
+    <div class="timeline wide">
+        {% for item in historial %}
+            <div>
+                <strong>{{ item.get_estado_anterior_display }} -> {{ item.get_estado_nuevo_display }}</strong>
+                <span>{{ item.comentario|default:"Sin comentario" }}</span>
+                <small>{{ item.fecha|date:"d/m/Y H:i" }}{% if item.usuario %} por {{ item.usuario.username }}{% endif %}</small>
+            </div>
+        {% empty %}
+            <p class="empty">No hay historial registrado.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+

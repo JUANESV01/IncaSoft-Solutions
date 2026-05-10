@@ -1,0 +1,55 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}INCASOFT Solutions{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'gestion/css/styles.css' %}">
+    <script defer src="{% static 'gestion/js/charts.js' %}"></script>
+</head>
+<body>
+    <aside class="sidebar">
+        <a class="brand" href="{% url 'gestion:dashboard' %}">
+            <span class="brand-mark">IS</span>
+            <span>
+                <strong>INCASOFT</strong>
+                <small>Solutions</small>
+            </span>
+        </a>
+        <nav class="nav">
+            <a href="{% url 'gestion:dashboard' %}">Tablero</a>
+            <a href="{% url 'gestion:incapacidad_lista' %}">Incapacidades</a>
+            <a href="{% url 'gestion:colaborador_lista' %}">Colaboradores</a>
+            <a href="{% url 'gestion:reportes' %}">Reportes</a>
+            {% if user.is_superuser %}
+                <a href="{% url 'gestion:usuario_lista' %}">Usuarios</a>
+            {% else %}
+                {% for group in user.groups.all %}
+                    {% if group.name == "Administrador" %}
+                        <a href="{% url 'gestion:usuario_lista' %}">Usuarios</a>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </nav>
+        <div class="session">
+            <span>{{ request.user.get_full_name|default:request.user.username }}</span>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="link-button" type="submit">Cerrar sesion</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

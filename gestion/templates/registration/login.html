@@ -1,0 +1,33 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ingresar | INCASOFT Solutions</title>
+    <link rel="stylesheet" href="{% static 'gestion/css/styles.css' %}">
+</head>
+<body class="login-body">
+    <section class="login-shell">
+        <div class="login-panel">
+            <span class="brand-mark large">IS</span>
+            <h1>INCASOFT Solutions</h1>
+            <p>Gestion de incapacidades medicas, licencias, trazabilidad y reportes para IPS y empresas colombianas.</p>
+        </div>
+        <form class="login-form" method="post">
+            {% csrf_token %}
+            <h2>Ingreso al sistema</h2>
+            {% if form.errors %}
+                <div class="message error">Credenciales invalidas o usuario inactivo.</div>
+            {% endif %}
+            <label for="{{ form.username.id_for_label }}">Usuario</label>
+            {{ form.username }}
+            <label for="{{ form.password.id_for_label }}">Contrasena</label>
+            {{ form.password }}
+            <button class="button primary" type="submit">Ingresar</button>
+            <p class="muted">Usuarios demo: administrador, gestionhumana, gerente. Contrasena: IncaSoft2026*</p>
+        </form>
+    </section>
+</body>
+</html>
+

@@ -1,0 +1,55 @@
+{% extends "gestion/base.html" %}
+{% block title %}Colaborador | INCASOFT{% endblock %}
+{% block content %}
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Ficha de colaborador</p>
+        <h1>{{ colaborador.nombre_completo }}</h1>
+    </div>
+    <div class="actions">
+        {% if puede_editar %}<a class="button primary" href="{% url 'gestion:colaborador_editar' colaborador.pk %}">Editar</a>{% endif %}
+        <a class="button ghost" href="{% url 'gestion:colaborador_lista' %}">Volver</a>
+    </div>
+</header>
+
+<section class="detail-grid">
+    <article class="panel">
+        <div class="panel-head"><h2>Datos laborales</h2></div>
+        <dl class="data-list">
+            <div><dt>Documento</dt><dd>{{ colaborador.tipo_documento }} {{ colaborador.numero_identificacion }}</dd></div>
+            <div><dt>Cargo</dt><dd>{{ colaborador.cargo }}</dd></div>
+            <div><dt>Area</dt><dd>{{ colaborador.area }}</dd></div>
+            <div><dt>Correo</dt><dd>{{ colaborador.correo|default:"Sin correo" }}</dd></div>
+            <div><dt>Telefono</dt><dd>{{ colaborador.telefono|default:"Sin telefono" }}</dd></div>
+            <div><dt>Estado</dt><dd>{{ colaborador.activo|yesno:"Activo,Inactivo" }}</dd></div>
+        </dl>
+    </article>
+    <article class="panel">
+        <div class="panel-head"><h2>Afiliaciones</h2></div>
+        <dl class="data-list">
+            <div><dt>EPS</dt><dd>{{ colaborador.eps }}</dd></div>
+            <div><dt>ARL</dt><dd>{{ colaborador.arl|default:"No registrada" }}</dd></div>
+        </dl>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="panel-head"><h2>Incapacidades asociadas</h2></div>
+    <table>
+        <thead><tr><th>Tipo</th><th>Estado</th><th>Periodo</th><th>Dias</th><th></th></tr></thead>
+        <tbody>
+        {% for item in incapacidades %}
+            <tr>
+                <td>{{ item.tipo.nombre }}</td>
+                <td><span class="status state-{{ item.estado|lower }}">{{ item.get_estado_display }}</span></td>
+                <td>{{ item.fecha_inicio }} a {{ item.fecha_fin }}</td>
+                <td>{{ item.dias }}</td>
+                <td><a class="table-action" href="{{ item.get_absolute_url }}">Ver</a></td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5" class="empty">Este colaborador no tiene incapacidades registradas.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
